@@ -1,37 +1,38 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Ohana Lagoon Nighttime Feed</title>
+  <title>Ohana Lagoon Test</title>
 
   <style>
     html, body {
       margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
       background: black;
-      overflow: hidden;
+      color: white;
+      font-family: Arial, sans-serif;
     }
 
     #player {
       width: 100vw;
-      height: 100vh;
+      height: 75vh;
+    }
+
+    #debug {
+      font-size: 32px;
+      text-align: center;
+      padding: 20px;
     }
 
     #testMessage {
       position: fixed;
-      top: 40%;
+      top: 30%;
       left: 0;
       width: 100%;
       text-align: center;
-      font-family: Arial, sans-serif;
-      font-size: 72px;
+      font-size: 80px;
       font-weight: bold;
-      color: white;
-      background: rgba(0, 0, 0, 0.85);
-      padding: 30px 0;
+      background: black;
+      padding: 40px 0;
       display: none;
       z-index: 9999;
     }
@@ -41,58 +42,67 @@
 <body>
 
 <div id="player"></div>
-<div id="testMessage">LIGHTS OFF</div>
+
+<div id="debug">
+  Waiting for player...
+</div>
+
+<div id="testMessage">
+  LIGHTS OFF
+</div>
 
 <script>
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  const firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
   let player;
-  let timer;
 
   function onYouTubeIframeAPIReady() {
+    document.getElementById('debug').innerHTML = 'YouTube API loaded';
+
     player = new YT.Player('player', {
       videoId: 'LZvoiZrAd2U',
       playerVars: {
-        autoplay: 0,
         controls: 1,
-        rel: 0,
         playsinline: 1
       },
       events: {
-        onStateChange: onPlayerStateChange
+        onReady: function () {
+          document.getElementById('debug').innerHTML =
+            'Player ready — press PLAY';
+        }
       }
     });
   }
 
-  function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.PLAYING) {
-      if (!timer) {
-        timer = setInterval(checkTime, 100);
+  setInterval(function () {
+
+    if (
+      player &&
+      typeof player.getCurrentTime === 'function'
+    ) {
+
+      const currentTime = player.getCurrentTime();
+
+      document.getElementById('debug').innerHTML =
+        'Video time: ' + currentTime.toFixed(1) + ' seconds';
+
+      if (currentTime >= 10 && currentTime < 13) {
+        document.getElementById('testMessage').style.display = 'block';
+      } else {
+        document.getElementById('testMessage').style.display = 'none';
       }
     }
 
-    if (
-      event.data === YT.PlayerState.PAUSED ||
-      event.data === YT.PlayerState.ENDED
-    ) {
-      clearInterval(timer);
-      timer = null;
-    }
-  }
+  }, 250);
 
-  function checkTime() {
-    const currentTime = player.getCurrentTime();
-    const message = document.getElementById('testMessage');
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
 
-    if (currentTime >= 10 && currentTime < 13) {
-      message.style.display = 'block';
-    } else {
-      message.style.display = 'none';
-    }
-  }
+  const firstScriptTag =
+    document.getElementsByTagName('script')[0];
+
+  firstScriptTag.parentNode.insertBefore(
+    tag,
+    firstScriptTag
+  );
 </script>
 
 </body>
