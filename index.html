@@ -2,107 +2,577 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Ohana Lagoon Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ohana Lagoon Nighttime Show</title>
 
   <style>
     html, body {
       margin: 0;
-      background: black;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #000;
       color: white;
       font-family: Arial, sans-serif;
     }
 
     #player {
-      width: 100vw;
-      height: 75vh;
-    }
-
-    #debug {
-      font-size: 32px;
-      text-align: center;
-      padding: 20px;
-    }
-
-    #testMessage {
-      position: fixed;
-      top: 30%;
-      left: 0;
       width: 100%;
+      height: 72vh;
+    }
+
+    #status {
+      padding: 12px;
       text-align: center;
-      font-size: 80px;
+      background: #111;
+      font-size: 18px;
+    }
+
+    #currentCue {
+      font-size: 22px;
       font-weight: bold;
-      background: black;
-      padding: 40px 0;
+      margin-top: 4px;
+    }
+
+    #overlay {
+      position: fixed;
+      left: 0;
+      top: 25%;
+      width: 100%;
+      box-sizing: border-box;
+
+      text-align: center;
+      padding: 35px 15px;
+
+      font-size: 56px;
+      font-weight: bold;
+
+      background: rgba(0,0,0,0.88);
+
       display: none;
       z-index: 9999;
+    }
+
+    #overlayDetail {
+      font-size: 24px;
+      margin-top: 12px;
+      font-weight: normal;
+    }
+
+    #testBadge {
+      position: fixed;
+      right: 10px;
+      top: 10px;
+
+      background: #222;
+      border: 2px solid white;
+      padding: 8px 12px;
+
+      font-size: 14px;
+      z-index: 10000;
     }
   </style>
 </head>
 
 <body>
 
+<div id="testBadge">
+  SHOW TEST MODE
+</div>
+
 <div id="player"></div>
 
-<div id="debug">
-  Waiting for player...
+<div id="status">
+  <div id="time">Waiting for video...</div>
+  <div id="currentCue">CALM NIGHT</div>
 </div>
 
-<div id="testMessage">
-  LIGHTS OFF
+<div id="overlay">
+  <div id="overlayTitle"></div>
+  <div id="overlayDetail"></div>
 </div>
+
 
 <script>
-  let player;
 
-  function onYouTubeIframeAPIReady() {
-    document.getElementById('debug').innerHTML = 'YouTube API loaded';
+let player;
 
-    player = new YT.Player('player', {
-      videoId: 'LZvoiZrAd2U',
-      playerVars: {
-        controls: 1,
-        playsinline: 1
-      },
-      events: {
-        onReady: function () {
-          document.getElementById('debug').innerHTML =
-            'Player ready — press PLAY';
-        }
-      }
-    });
+/*
+=============================================
+OHANA LAGOON SHOW CUES
+=============================================
+Times are in seconds.
+*/
+
+const cues = [
+
+  // -----------------------------------------
+  // VOLCANO
+  // -----------------------------------------
+
+  {
+    start: 140,
+    end: 151,
+    title: "🌋 VOLCANO",
+    detail: "RED → ORANGE → YELLOW",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // FINDING NEMO SEAGULLS
+  // -----------------------------------------
+
+  {
+    start: 363,
+    end: 374,
+    title: "🐦 FINDING NEMO",
+    detail: "BLUE / TEAL + WHITE PULSES",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // MILLENNIUM FALCON
+  // -----------------------------------------
+
+  {
+    start: 525,
+    end: 533,
+    title: "🚀 MILLENNIUM FALCON",
+    detail: "DARK → BLUE-WHITE → BRIGHT BLAST",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // TANGLED LANTERNS
+  // -----------------------------------------
+
+  {
+    start: 675,
+    end: 696,
+    title: "🏮 TANGLED LANTERNS",
+    detail: "SOFT GOLD / WARM AMBER",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // PIZZA PLANET / PUNK ROCK BOAT
+  // -----------------------------------------
+
+  {
+    start: 835,
+    end: 862,
+    title: "🎸 PIZZA PLANET",
+    detail: "PINK / PURPLE / BLUE PARTY LIGHTS",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // KAKAMORA
+  // -----------------------------------------
+
+  {
+    start: 997,
+    end: 1008,
+    title: "🥥 KAKAMORA ATTACK!",
+    detail: "RED / ORANGE IMPACT FLASHES",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // PIRATE SHIP
+  // -----------------------------------------
+
+  {
+    start: 1159,
+    end: 1184,
+    title: "🏴‍☠️ PIRATE SHIP",
+    detail: "DEEP RED + FLICKERING AMBER",
+    type: "event"
+  },
+
+
+  // -----------------------------------------
+  // STORM APPROACHES
+  // -----------------------------------------
+
+  {
+    start: 1284,
+    end: 1291,
+    title: "🌩 STORM APPROACHING",
+    detail: "DARK BLUE / PURPLE — VERY DIM",
+    type: "event"
+  },
+
+
+  // =========================================
+  // LIGHTNING STRIKES
+  // =========================================
+
+  {
+    start: 1291.00,
+    end: 1291.65,
+    title: "⚡ LIGHTNING 1",
+    detail: "BIG DOUBLE FLASH",
+    type: "lightning"
+  },
+
+  {
+    start: 1295.00,
+    end: 1295.65,
+    title: "⚡ LIGHTNING 2",
+    detail: "TRIPLE FLASH",
+    type: "lightning"
+  },
+
+  {
+    start: 1298.00,
+    end: 1298.55,
+    title: "⚡ LIGHTNING 3",
+    detail: "QUICK DOUBLE FLASH",
+    type: "lightning"
+  },
+
+  {
+    start: 1300.00,
+    end: 1300.60,
+    title: "⚡ LIGHTNING 4",
+    detail: "HARD WHITE FLASH",
+    type: "lightning"
+  },
+
+  {
+    start: 1303.00,
+    end: 1303.65,
+    title: "⚡ LIGHTNING 5",
+    detail: "WHITE-BLUE DOUBLE FLASH",
+    type: "lightning"
+  },
+
+  {
+    start: 1306.00,
+    end: 1306.70,
+    title: "⚡ LIGHTNING 6",
+    detail: "LONGER STRIKE",
+    type: "lightning"
+  },
+
+  {
+    start: 1310.00,
+    end: 1311.00,
+    title: "⚡⚡ FINAL LIGHTNING",
+    detail: "BIGGEST STRIKE",
+    type: "lightning"
+  },
+
+
+  // -----------------------------------------
+  // AFTER STORM
+  // -----------------------------------------
+
+  {
+    start: 1314,
+    end: 99999,
+    title: "🌴 CALM NIGHT RETURNS",
+    detail: "SLOW WARM AMBER FADE-IN",
+    type: "return"
   }
 
-  setInterval(function () {
+];
 
-    if (
-      player &&
-      typeof player.getCurrentTime === 'function'
-    ) {
 
-      const currentTime = player.getCurrentTime();
+/*
+=============================================
+YOUTUBE PLAYER
+=============================================
+*/
 
-      document.getElementById('debug').innerHTML =
-        'Video time: ' + currentTime.toFixed(1) + ' seconds';
+function onYouTubeIframeAPIReady() {
 
-      if (currentTime >= 10 && currentTime < 13) {
-        document.getElementById('testMessage').style.display = 'block';
-      } else {
-        document.getElementById('testMessage').style.display = 'none';
+  player = new YT.Player("player", {
+
+    videoId: "LZvoiZrAd2U",
+
+    playerVars: {
+      controls: 1,
+      playsinline: 1,
+      rel: 0
+    },
+
+    events: {
+
+      onReady: function() {
+
+        document.getElementById("time").innerHTML =
+          "Player ready — press PLAY";
+
       }
+
     }
 
-  }, 250);
+  });
 
-  const tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
+}
 
-  const firstScriptTag =
-    document.getElementsByTagName('script')[0];
 
-  firstScriptTag.parentNode.insertBefore(
-    tag,
-    firstScriptTag
+/*
+=============================================
+SHOW ENGINE
+=============================================
+*/
+
+function updateShow() {
+
+  if (!player ||
+      typeof player.getCurrentTime !== "function") {
+    return;
+  }
+
+
+  const time = player.getCurrentTime();
+
+
+  // Display timestamp
+
+  document.getElementById("time").innerHTML =
+    "Video time: " + formatTime(time);
+
+
+  // Default state
+
+  let activeCue = null;
+
+
+  // Look for active cue
+
+  for (let cue of cues) {
+
+    if (time >= cue.start && time < cue.end) {
+
+      activeCue = cue;
+      break;
+
+    }
+
+  }
+
+
+  if (activeCue) {
+
+    runCue(activeCue, time);
+
+  } else {
+
+    calmNight();
+
+  }
+
+}
+
+
+/*
+=============================================
+CALM NIGHT
+=============================================
+*/
+
+function calmNight() {
+
+  document.getElementById("currentCue").innerHTML =
+    "🌴 CALM NIGHT — WARM AMBER";
+
+  hideOverlay();
+
+}
+
+
+/*
+=============================================
+EVENT CUES
+=============================================
+*/
+
+function runCue(cue, time) {
+
+  document.getElementById("currentCue").innerHTML =
+    cue.title;
+
+
+  if (cue.type === "lightning") {
+
+    lightningEffect(cue, time);
+
+  } else {
+
+    showOverlay(
+      cue.title,
+      cue.detail
+    );
+
+  }
+
+}
+
+
+/*
+=============================================
+LIGHTNING SIMULATION
+=============================================
+*/
+
+function lightningEffect(cue, time) {
+
+  const elapsed = time - cue.start;
+
+  const overlay =
+    document.getElementById("overlay");
+
+
+  showOverlay(
+    cue.title,
+    cue.detail
   );
+
+
+  /*
+  These alternating intervals simulate
+  irregular lightning flashes.
+  */
+
+  if (
+      elapsed < 0.12 ||
+
+      (elapsed > 0.22 &&
+       elapsed < 0.34) ||
+
+      (elapsed > 0.46 &&
+       elapsed < 0.56)
+     ) {
+
+    overlay.style.background =
+      "rgba(255,255,255,0.96)";
+
+    overlay.style.color =
+      "black";
+
+  } else {
+
+    overlay.style.background =
+      "rgba(0,0,15,0.96)";
+
+    overlay.style.color =
+      "white";
+
+  }
+
+}
+
+
+/*
+=============================================
+OVERLAY
+=============================================
+*/
+
+function showOverlay(title, detail) {
+
+  const overlay =
+    document.getElementById("overlay");
+
+  document.getElementById("overlayTitle")
+    .innerHTML = title;
+
+  document.getElementById("overlayDetail")
+    .innerHTML = detail;
+
+  overlay.style.display = "block";
+
+  if (!title.includes("LIGHTNING")) {
+
+    overlay.style.background =
+      "rgba(0,0,0,0.88)";
+
+    overlay.style.color =
+      "white";
+
+  }
+
+}
+
+
+function hideOverlay() {
+
+  const overlay =
+    document.getElementById("overlay");
+
+  overlay.style.display = "none";
+
+}
+
+
+/*
+=============================================
+TIME FORMAT
+=============================================
+*/
+
+function formatTime(seconds) {
+
+  const minutes =
+    Math.floor(seconds / 60);
+
+  const secs =
+    Math.floor(seconds % 60);
+
+  const tenths =
+    Math.floor((seconds % 1) * 10);
+
+  return (
+    minutes +
+    ":" +
+    secs.toString().padStart(2, "0") +
+    "." +
+    tenths
+  );
+
+}
+
+
+/*
+=============================================
+RUN SHOW CHECK 20 TIMES PER SECOND
+=============================================
+*/
+
+setInterval(updateShow, 50);
+
+
+/*
+=============================================
+LOAD YOUTUBE API
+=============================================
+*/
+
+const tag =
+  document.createElement("script");
+
+tag.src =
+  "https://www.youtube.com/iframe_api";
+
+const firstScriptTag =
+  document.getElementsByTagName("script")[0];
+
+firstScriptTag.parentNode.insertBefore(
+  tag,
+  firstScriptTag
+);
+
 </script>
 
 </body>
