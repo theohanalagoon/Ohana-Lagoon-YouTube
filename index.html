@@ -67,17 +67,290 @@ html, body {
 const WORKER =
 "https://ohanagoveebridge.theohanalagoon.workers.dev";
 
+const VIDEO_ID =
+"LZvoiZrAd2U";
+
+
 let player;
 
 let lastCue = null;
+
+let previousVideoTime = 0;
+
+
+/*
+========================================
+TRANQUIL NIGHT ENGINE
+========================================
+*/
+
+let nightTimer = null;
+
+let fireflyTimer = null;
+
+let nightIndex = 0;
+
+let nightActive = false;
+
+let fireflyInProgress = false;
+
+
+/*
+The order intentionally avoids making
+the sky feel like a simple four-color loop.
+*/
+
+const nightStates = [
+
+  "/show/night1",
+
+  "/show/night2",
+
+  "/show/night4",
+
+  "/show/night1",
+
+  "/show/night3",
+
+  "/show/night2",
+
+  "/show/night4"
+
+];
 
 
 function trigger(path) {
 
   fetch(WORKER + path)
     .catch(error => {
-      console.log(error);
+
+      console.log(
+        "Worker error:",
+        error
+      );
+
     });
+
+}
+
+
+/*
+========================================
+NIGHT-SKY COLOR CYCLE
+========================================
+*/
+
+function startNightSky() {
+
+  if (nightActive) {
+    return;
+  }
+
+
+  nightActive = true;
+
+  nightIndex = 0;
+
+
+  trigger(
+    nightStates[nightIndex]
+  );
+
+
+  /*
+  Gentle sky change every 6.5 seconds.
+  */
+
+  nightTimer =
+    setInterval(
+      function () {
+
+        if (
+          !nightActive ||
+          fireflyInProgress
+        ) {
+          return;
+        }
+
+
+        nightIndex =
+          (nightIndex + 1) %
+          nightStates.length;
+
+
+        trigger(
+          nightStates[nightIndex]
+        );
+
+      },
+
+      6500
+    );
+
+
+  /*
+  Start independent firefly scheduling.
+  */
+
+  scheduleNextFirefly();
+
+}
+
+
+/*
+========================================
+STOP TRANQUIL NIGHT
+========================================
+*/
+
+function stopNightSky() {
+
+  nightActive = false;
+
+  fireflyInProgress = false;
+
+
+  if (nightTimer !== null) {
+
+    clearInterval(
+      nightTimer
+    );
+
+    nightTimer = null;
+
+  }
+
+
+  if (fireflyTimer !== null) {
+
+    clearTimeout(
+      fireflyTimer
+    );
+
+    fireflyTimer = null;
+
+  }
+
+}
+
+
+/*
+========================================
+FIREFLY SCHEDULER
+========================================
+*/
+
+function scheduleNextFirefly() {
+
+  if (!nightActive) {
+    return;
+  }
+
+
+  /*
+  Random delay:
+  12 to 20 seconds.
+
+  This keeps the fireflies from becoming
+  predictable.
+  */
+
+  const delay =
+    12000 +
+    Math.random() * 8000;
+
+
+  fireflyTimer =
+    setTimeout(
+      function () {
+
+        runFirefly();
+
+      },
+
+      delay
+    );
+
+}
+
+
+/*
+========================================
+FIREFLY
+========================================
+*/
+
+function runFirefly() {
+
+  if (
+    !nightActive ||
+    fireflyInProgress
+  ) {
+
+    scheduleNextFirefly();
+
+    return;
+
+  }
+
+
+  fireflyInProgress = true;
+
+
+  /*
+  Remember the exact night color
+  that was active before the firefly.
+  */
+
+  const returnState =
+    nightStates[nightIndex];
+
+
+  /*
+  Brief golden-yellow glow.
+  */
+
+  trigger(
+    "/show/firefly"
+  );
+
+
+  /*
+  After roughly one second,
+  return to the sky color that
+  was active before the firefly.
+  */
+
+  setTimeout(
+    function () {
+
+      if (nightActive) {
+
+        trigger(
+          returnState
+        );
+
+      }
+
+
+      fireflyInProgress = false;
+
+
+      /*
+      Schedule another unpredictable
+      firefly later.
+      */
+
+      if (nightActive) {
+
+        scheduleNextFirefly();
+
+      }
+
+    },
+
+    1100
+  );
 
 }
 
@@ -94,121 +367,143 @@ const cues = [
     id: "calm1",
     start: 0,
     end: 140,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "volcano",
     start: 140,
     end: 151,
     label: "🌋 VOLCANO",
+    type: "event",
     action: "/show/volcano"
   },
+
 
   {
     id: "calm2",
     start: 151,
     end: 363,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "nemo",
     start: 363,
     end: 374,
     label: "🐦 FINDING NEMO",
+    type: "event",
     action: "/show/nemo"
   },
+
 
   {
     id: "calm3",
     start: 374,
     end: 525,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "falcon",
     start: 525,
     end: 533,
     label: "🚀 MILLENNIUM FALCON",
+    type: "event",
     action: "/show/falcon"
   },
+
 
   {
     id: "calm4",
     start: 533,
     end: 675,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "lanterns",
     start: 675,
     end: 696,
-    label: "🏮 TANGLED",
+    label: "🏮 TANGLED LANTERNS",
+    type: "event",
     action: "/show/lanterns"
   },
+
 
   {
     id: "calm5",
     start: 696,
     end: 835,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "pizza",
     start: 835,
     end: 862,
     label: "🎸 PIZZA PLANET",
+    type: "event",
     action: "/show/pizza"
   },
+
 
   {
     id: "calm6",
     start: 862,
     end: 997,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "kakamora",
     start: 997,
     end: 1008,
     label: "🥥 KAKAMORA",
+    type: "event",
     action: "/show/kakamora"
   },
+
 
   {
     id: "calm7",
     start: 1008,
     end: 1159,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   {
     id: "pirates",
     start: 1159,
     end: 1184,
     label: "🏴‍☠️ PIRATE SHIP",
+    type: "event",
     action: "/show/pirates"
   },
+
 
   {
     id: "calm8",
     start: 1184,
     end: 1284,
-    label: "🌴 CALM NIGHT",
-    action: "/show/amber"
+    label: "✨ TRANQUIL NIGHT SKY",
+    type: "night"
   },
+
 
   // ==========================================
   // THUNDERSTORM
@@ -219,115 +514,234 @@ const cues = [
     start: 1284,
     end: 1287.5,
     label: "🌩 STORM APPROACHING",
+    type: "event",
     action: "/show/stormarm"
   },
+
 
   {
     id: "flash0",
     start: 1288.0,
     end: 1288.6,
     label: "⚡ DISTANT LIGHTNING",
+    type: "event",
     action: "/show/flash"
   },
+
 
   {
     id: "flash1",
     start: 1291.0,
     end: 1291.6,
-    label: "⚡ LIGHTNING",
+    label: "⚡ BIG LIGHTNING",
+    type: "event",
     action: "/show/bigflash"
   },
+
 
   {
     id: "flash2",
     start: 1293.5,
     end: 1294.1,
     label: "⚡ LIGHTNING",
+    type: "event",
     action: "/show/flash"
   },
+
 
   {
     id: "flash3",
     start: 1295.2,
     end: 1296.5,
     label: "⚡⚡ DOUBLE LIGHTNING",
+    type: "event",
     action: "/show/doubleflash"
   },
+
 
   {
     id: "flash4",
     start: 1298.0,
     end: 1298.6,
     label: "⚡ LIGHTNING",
+    type: "event",
     action: "/show/flash"
   },
+
 
   {
     id: "flash5",
     start: 1300.3,
     end: 1300.9,
-    label: "⚡ LIGHTNING",
+    label: "⚡ BIG LIGHTNING",
+    type: "event",
     action: "/show/bigflash"
   },
+
 
   {
     id: "flash6",
     start: 1302.0,
     end: 1302.6,
     label: "⚡ LIGHTNING",
+    type: "event",
     action: "/show/flash"
   },
+
 
   {
     id: "flash7",
     start: 1303.3,
     end: 1304.0,
-    label: "⚡ LIGHTNING",
+    label: "⚡ BIG LIGHTNING",
+    type: "event",
     action: "/show/bigflash"
   },
+
 
   {
     id: "flash8",
     start: 1306.0,
     end: 1306.7,
-    label: "⚡ LIGHTNING",
+    label: "⚡ BIG LIGHTNING",
+    type: "event",
     action: "/show/bigflash"
   },
+
 
   {
     id: "flash9",
     start: 1308.4,
     end: 1309.0,
     label: "⚡ LIGHTNING",
+    type: "event",
     action: "/show/flash"
   },
+
 
   {
     id: "flash10",
     start: 1310.0,
     end: 1312.0,
     label: "⚡⚡ FINAL STRIKE",
+    type: "event",
     action: "/show/finalflash"
   },
+
 
   {
     id: "blackout",
     start: 1312,
     end: 1313,
     label: "DARKNESS",
+    type: "event",
     action: "/show/off"
   },
 
+
+  // ==========================================
+  // 21:53 NIGHT RETURNS
+  // ==========================================
+
   {
-    id: "return",
+    id: "night-return",
     start: 1313,
     end: 99999,
-    label: "🌴 CALM NIGHT RETURNS",
-    action: "/show/amberreset"
+    label: "✨ TRANQUIL NIGHT RETURNS",
+    type: "nightreset"
   }
 
 ];
 
+
+/*
+========================================
+ENTER NEW CUE
+========================================
+*/
+
+function enterCue(cue) {
+
+  document
+    .getElementById("cue")
+    .innerHTML =
+    cue.label;
+
+
+  /*
+  NORMAL TRANQUIL SECTION
+  */
+
+  if (cue.type === "night") {
+
+    stopNightSky();
+
+    startNightSky();
+
+    return;
+
+  }
+
+
+  /*
+  AFTER STORM
+  */
+
+  if (cue.type === "nightreset") {
+
+    stopNightSky();
+
+
+    trigger(
+      "/show/nightreset"
+    );
+
+
+    /*
+    Wait for the deliberate storm reset
+    to finish before restarting shimmer
+    and fireflies.
+    */
+
+    setTimeout(
+      function () {
+
+        startNightSky();
+
+      },
+
+      5000
+    );
+
+
+    return;
+
+  }
+
+
+  /*
+  SPECIAL SCENE
+  */
+
+  stopNightSky();
+
+
+  if (cue.action) {
+
+    trigger(
+      cue.action
+    );
+
+  }
+
+}
+
+
+/*
+========================================
+SHOW ENGINE
+========================================
+*/
 
 function updateShow() {
 
@@ -338,14 +752,35 @@ function updateShow() {
     return;
   }
 
+
   const t =
     player.getCurrentTime();
 
 
-  document.getElementById("time")
+  document
+    .getElementById("time")
     .innerHTML =
     "Video time: " +
     formatTime(t);
+
+
+  /*
+  Detect automatic video loop.
+  */
+
+  if (
+    previousVideoTime > 1300 &&
+    t < 10
+  ) {
+
+    lastCue = null;
+
+    stopNightSky();
+
+  }
+
+
+  previousVideoTime = t;
 
 
   let active = null;
@@ -361,6 +796,7 @@ function updateShow() {
       active = cue;
 
       break;
+
     }
 
   }
@@ -371,24 +807,25 @@ function updateShow() {
   }
 
 
-  document.getElementById("cue")
-    .innerHTML =
-    active.label;
-
-
   if (active.id !== lastCue) {
 
     lastCue =
       active.id;
 
-    trigger(
-      active.action
+    enterCue(
+      active
     );
 
   }
 
 }
 
+
+/*
+========================================
+YOUTUBE PLAYER
+========================================
+*/
 
 function onYouTubeIframeAPIReady() {
 
@@ -398,12 +835,21 @@ function onYouTubeIframeAPIReady() {
       {
 
         videoId:
-          "LZvoiZrAd2U",
+          VIDEO_ID,
 
         playerVars: {
+
           controls: 1,
+
           playsinline: 1,
-          rel: 0
+
+          rel: 0,
+
+          loop: 1,
+
+          playlist:
+            VIDEO_ID
+
         },
 
         events: {
@@ -416,6 +862,25 @@ function onYouTubeIframeAPIReady() {
                 .innerHTML =
                 "Player ready — press PLAY";
 
+            },
+
+
+          onStateChange:
+            function (event) {
+
+              if (
+                event.data ===
+                YT.PlayerState.ENDED
+              ) {
+
+                lastCue = null;
+
+                previousVideoTime = 0;
+
+                stopNightSky();
+
+              }
+
             }
 
         }
@@ -425,6 +890,12 @@ function onYouTubeIframeAPIReady() {
 
 }
 
+
+/*
+========================================
+TIME DISPLAY
+========================================
+*/
 
 function formatTime(seconds) {
 
@@ -457,11 +928,23 @@ function formatTime(seconds) {
 }
 
 
+/*
+========================================
+CHECK VIDEO 10 TIMES PER SECOND
+========================================
+*/
+
 setInterval(
   updateShow,
   100
 );
 
+
+/*
+========================================
+LOAD YOUTUBE API
+========================================
+*/
 
 const tag =
   document.createElement(
