@@ -19,278 +19,360 @@
 
     #player {
       width: 100%;
-      height: 72vh;
+      height: 78vh;
     }
 
     #status {
-      padding: 12px;
+      padding: 10px;
       text-align: center;
       background: #111;
-      font-size: 18px;
+      font-size: 16px;
     }
 
-    #currentCue {
-      font-size: 22px;
+    #cue {
       font-weight: bold;
       margin-top: 4px;
-    }
-
-    #overlay {
-      position: fixed;
-      left: 0;
-      top: 25%;
-      width: 100%;
-      box-sizing: border-box;
-
-      text-align: center;
-      padding: 35px 15px;
-
-      font-size: 56px;
-      font-weight: bold;
-
-      background: rgba(0,0,0,0.88);
-
-      display: none;
-      z-index: 9999;
-    }
-
-    #overlayDetail {
-      font-size: 24px;
-      margin-top: 12px;
-      font-weight: normal;
-    }
-
-    #testBadge {
-      position: fixed;
-      right: 10px;
-      top: 10px;
-
-      background: #222;
-      border: 2px solid white;
-      padding: 8px 12px;
-
-      font-size: 14px;
-      z-index: 10000;
     }
   </style>
 </head>
 
 <body>
 
-<div id="testBadge">
-  SHOW TEST MODE
-</div>
-
 <div id="player"></div>
 
 <div id="status">
-  <div id="time">Waiting for video...</div>
-  <div id="currentCue">CALM NIGHT</div>
+  <div id="time">Waiting for player...</div>
+  <div id="cue">SHOW READY</div>
 </div>
-
-<div id="overlay">
-  <div id="overlayTitle"></div>
-  <div id="overlayDetail"></div>
-</div>
-
 
 <script>
 
+const WORKER =
+  "https://ohanagoveebridge.theohanalagoon.workers.dev";
+
 let player;
+let lastCue = null;
+
 
 /*
-=============================================
-OHANA LAGOON SHOW CUES
-=============================================
-Times are in seconds.
+========================================
+HELPER: CALL CLOUDFLARE WORKER
+========================================
+*/
+
+async function trigger(path) {
+  try {
+    await fetch(WORKER + path, {
+      method: "GET"
+    });
+  } catch (error) {
+    console.log("Worker error:", error);
+  }
+}
+
+
+/*
+========================================
+SHOW CUES
+========================================
 */
 
 const cues = [
 
-  // -----------------------------------------
-  // VOLCANO
-  // -----------------------------------------
+  {
+    id: "calm-start",
+    start: 0,
+    end: 140,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "volcano",
     start: 140,
     end: 151,
-    title: "🌋 VOLCANO",
-    detail: "RED → ORANGE → YELLOW",
-    type: "event"
+    label: "🌋 VOLCANO",
+    action: "/show/volcano"
   },
 
-
-  // -----------------------------------------
-  // FINDING NEMO SEAGULLS
-  // -----------------------------------------
+  {
+    id: "calm-2",
+    start: 151,
+    end: 363,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "nemo",
     start: 363,
     end: 374,
-    title: "🐦 FINDING NEMO",
-    detail: "BLUE / TEAL + WHITE PULSES",
-    type: "event"
+    label: "🐦 FINDING NEMO",
+    action: "/show/nemo"
   },
 
-
-  // -----------------------------------------
-  // MILLENNIUM FALCON
-  // -----------------------------------------
+  {
+    id: "calm-3",
+    start: 374,
+    end: 525,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "falcon",
     start: 525,
     end: 533,
-    title: "🚀 MILLENNIUM FALCON",
-    detail: "DARK → BLUE-WHITE → BRIGHT BLAST",
-    type: "event"
+    label: "🚀 MILLENNIUM FALCON",
+    action: "/show/falcon"
   },
 
-
-  // -----------------------------------------
-  // TANGLED LANTERNS
-  // -----------------------------------------
+  {
+    id: "calm-4",
+    start: 533,
+    end: 675,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "lanterns",
     start: 675,
     end: 696,
-    title: "🏮 TANGLED LANTERNS",
-    detail: "SOFT GOLD / WARM AMBER",
-    type: "event"
+    label: "🏮 TANGLED LANTERNS",
+    action: "/show/lanterns"
   },
 
-
-  // -----------------------------------------
-  // PIZZA PLANET / PUNK ROCK BOAT
-  // -----------------------------------------
+  {
+    id: "calm-5",
+    start: 696,
+    end: 835,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "pizza",
     start: 835,
     end: 862,
-    title: "🎸 PIZZA PLANET",
-    detail: "PINK / PURPLE / BLUE PARTY LIGHTS",
-    type: "event"
+    label: "🎸 PIZZA PLANET",
+    action: "/show/pizza"
   },
 
-
-  // -----------------------------------------
-  // KAKAMORA
-  // -----------------------------------------
+  {
+    id: "calm-6",
+    start: 862,
+    end: 997,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "kakamora",
     start: 997,
     end: 1008,
-    title: "🥥 KAKAMORA ATTACK!",
-    detail: "RED / ORANGE IMPACT FLASHES",
-    type: "event"
+    label: "🥥 KAKAMORA ATTACK",
+    action: "/show/kakamora"
   },
 
-
-  // -----------------------------------------
-  // PIRATE SHIP
-  // -----------------------------------------
+  {
+    id: "calm-7",
+    start: 1008,
+    end: 1159,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "pirates",
     start: 1159,
     end: 1184,
-    title: "🏴‍☠️ PIRATE SHIP",
-    detail: "DEEP RED + FLICKERING AMBER",
-    type: "event"
+    label: "🏴‍☠️ PIRATE SHIP",
+    action: "/show/pirates"
   },
 
-
-  // -----------------------------------------
-  // STORM APPROACHES
-  // -----------------------------------------
+  {
+    id: "calm-8",
+    start: 1184,
+    end: 1284,
+    label: "🌴 CALM NIGHT",
+    action: "/show/amber"
+  },
 
   {
+    id: "storm",
     start: 1284,
     end: 1291,
-    title: "🌩 STORM APPROACHING",
-    detail: "DARK BLUE / PURPLE — VERY DIM",
-    type: "event"
-  },
-
-
-  // =========================================
-  // LIGHTNING STRIKES
-  // =========================================
-
-  {
-    start: 1291.00,
-    end: 1291.65,
-    title: "⚡ LIGHTNING 1",
-    detail: "BIG DOUBLE FLASH",
-    type: "lightning"
+    label: "🌩 STORM APPROACHING",
+    action: "/show/storm"
   },
 
   {
-    start: 1295.00,
-    end: 1295.65,
-    title: "⚡ LIGHTNING 2",
-    detail: "TRIPLE FLASH",
-    type: "lightning"
+    id: "lightning1",
+    start: 1291,
+    end: 1292,
+    label: "⚡ LIGHTNING 1",
+    action: "/show/lightning1"
   },
 
   {
-    start: 1298.00,
-    end: 1298.55,
-    title: "⚡ LIGHTNING 3",
-    detail: "QUICK DOUBLE FLASH",
-    type: "lightning"
+    id: "storm2",
+    start: 1292,
+    end: 1295,
+    label: "🌩 STORM",
+    action: "/show/storm"
   },
 
   {
-    start: 1300.00,
-    end: 1300.60,
-    title: "⚡ LIGHTNING 4",
-    detail: "HARD WHITE FLASH",
-    type: "lightning"
+    id: "lightning2",
+    start: 1295,
+    end: 1296,
+    label: "⚡ LIGHTNING 2",
+    action: "/show/lightning2"
   },
 
   {
-    start: 1303.00,
-    end: 1303.65,
-    title: "⚡ LIGHTNING 5",
-    detail: "WHITE-BLUE DOUBLE FLASH",
-    type: "lightning"
+    id: "storm3",
+    start: 1296,
+    end: 1298,
+    label: "🌩 STORM",
+    action: "/show/storm"
   },
 
   {
-    start: 1306.00,
-    end: 1306.70,
-    title: "⚡ LIGHTNING 6",
-    detail: "LONGER STRIKE",
-    type: "lightning"
+    id: "lightning3",
+    start: 1298,
+    end: 1299,
+    label: "⚡ LIGHTNING 3",
+    action: "/show/lightning3"
   },
 
   {
-    start: 1310.00,
-    end: 1311.00,
-    title: "⚡⚡ FINAL LIGHTNING",
-    detail: "BIGGEST STRIKE",
-    type: "lightning"
+    id: "storm4",
+    start: 1299,
+    end: 1300,
+    label: "🌩 STORM",
+    action: "/show/storm"
   },
 
-
-  // -----------------------------------------
-  // AFTER STORM
-  // -----------------------------------------
+  {
+    id: "lightning4",
+    start: 1300,
+    end: 1301,
+    label: "⚡ LIGHTNING 4",
+    action: "/show/lightning4"
+  },
 
   {
+    id: "storm5",
+    start: 1301,
+    end: 1303,
+    label: "🌩 STORM",
+    action: "/show/storm"
+  },
+
+  {
+    id: "lightning5",
+    start: 1303,
+    end: 1304,
+    label: "⚡ LIGHTNING 5",
+    action: "/show/lightning5"
+  },
+
+  {
+    id: "storm6",
+    start: 1304,
+    end: 1306,
+    label: "🌩 STORM",
+    action: "/show/storm"
+  },
+
+  {
+    id: "lightning6",
+    start: 1306,
+    end: 1307,
+    label: "⚡ LIGHTNING 6",
+    action: "/show/lightning6"
+  },
+
+  {
+    id: "storm7",
+    start: 1307,
+    end: 1310,
+    label: "🌩 STORM",
+    action: "/show/storm"
+  },
+
+  {
+    id: "final-lightning",
+    start: 1310,
+    end: 1312,
+    label: "⚡⚡ FINAL LIGHTNING",
+    action: "/show/lightningFinal"
+  },
+
+  {
+    id: "dark-after",
+    start: 1312,
+    end: 1314,
+    label: "BLACKOUT",
+    action: "/show/off"
+  },
+
+  {
+    id: "calm-return",
     start: 1314,
     end: 99999,
-    title: "🌴 CALM NIGHT RETURNS",
-    detail: "SLOW WARM AMBER FADE-IN",
-    type: "return"
+    label: "🌴 CALM NIGHT RETURNS",
+    action: "/show/amber"
   }
 
 ];
 
 
 /*
-=============================================
-YOUTUBE PLAYER
-=============================================
+========================================
+SHOW ENGINE
+========================================
+*/
+
+function updateShow() {
+
+  if (!player ||
+      typeof player.getCurrentTime !== "function") {
+    return;
+  }
+
+  const t = player.getCurrentTime();
+
+  document.getElementById("time").innerHTML =
+    "Video time: " + formatTime(t);
+
+  let active = null;
+
+  for (const cue of cues) {
+    if (t >= cue.start && t < cue.end) {
+      active = cue;
+      break;
+    }
+  }
+
+  if (!active) return;
+
+  document.getElementById("cue").innerHTML =
+    active.label;
+
+  if (active.id !== lastCue) {
+    lastCue = active.id;
+    trigger(active.action);
+  }
+}
+
+
+/*
+========================================
+YOUTUBE
+========================================
 */
 
 function onYouTubeIframeAPIReady() {
@@ -307,231 +389,22 @@ function onYouTubeIframeAPIReady() {
 
     events: {
 
-      onReady: function() {
-
+      onReady: function () {
         document.getElementById("time").innerHTML =
           "Player ready — press PLAY";
-
       }
 
     }
 
   });
-
 }
 
-
-/*
-=============================================
-SHOW ENGINE
-=============================================
-*/
-
-function updateShow() {
-
-  if (!player ||
-      typeof player.getCurrentTime !== "function") {
-    return;
-  }
-
-
-  const time = player.getCurrentTime();
-
-
-  // Display timestamp
-
-  document.getElementById("time").innerHTML =
-    "Video time: " + formatTime(time);
-
-
-  // Default state
-
-  let activeCue = null;
-
-
-  // Look for active cue
-
-  for (let cue of cues) {
-
-    if (time >= cue.start && time < cue.end) {
-
-      activeCue = cue;
-      break;
-
-    }
-
-  }
-
-
-  if (activeCue) {
-
-    runCue(activeCue, time);
-
-  } else {
-
-    calmNight();
-
-  }
-
-}
-
-
-/*
-=============================================
-CALM NIGHT
-=============================================
-*/
-
-function calmNight() {
-
-  document.getElementById("currentCue").innerHTML =
-    "🌴 CALM NIGHT — WARM AMBER";
-
-  hideOverlay();
-
-}
-
-
-/*
-=============================================
-EVENT CUES
-=============================================
-*/
-
-function runCue(cue, time) {
-
-  document.getElementById("currentCue").innerHTML =
-    cue.title;
-
-
-  if (cue.type === "lightning") {
-
-    lightningEffect(cue, time);
-
-  } else {
-
-    showOverlay(
-      cue.title,
-      cue.detail
-    );
-
-  }
-
-}
-
-
-/*
-=============================================
-LIGHTNING SIMULATION
-=============================================
-*/
-
-function lightningEffect(cue, time) {
-
-  const elapsed = time - cue.start;
-
-  const overlay =
-    document.getElementById("overlay");
-
-
-  showOverlay(
-    cue.title,
-    cue.detail
-  );
-
-
-  /*
-  These alternating intervals simulate
-  irregular lightning flashes.
-  */
-
-  if (
-      elapsed < 0.12 ||
-
-      (elapsed > 0.22 &&
-       elapsed < 0.34) ||
-
-      (elapsed > 0.46 &&
-       elapsed < 0.56)
-     ) {
-
-    overlay.style.background =
-      "rgba(255,255,255,0.96)";
-
-    overlay.style.color =
-      "black";
-
-  } else {
-
-    overlay.style.background =
-      "rgba(0,0,15,0.96)";
-
-    overlay.style.color =
-      "white";
-
-  }
-
-}
-
-
-/*
-=============================================
-OVERLAY
-=============================================
-*/
-
-function showOverlay(title, detail) {
-
-  const overlay =
-    document.getElementById("overlay");
-
-  document.getElementById("overlayTitle")
-    .innerHTML = title;
-
-  document.getElementById("overlayDetail")
-    .innerHTML = detail;
-
-  overlay.style.display = "block";
-
-  if (!title.includes("LIGHTNING")) {
-
-    overlay.style.background =
-      "rgba(0,0,0,0.88)";
-
-    overlay.style.color =
-      "white";
-
-  }
-
-}
-
-
-function hideOverlay() {
-
-  const overlay =
-    document.getElementById("overlay");
-
-  overlay.style.display = "none";
-
-}
-
-
-/*
-=============================================
-TIME FORMAT
-=============================================
-*/
 
 function formatTime(seconds) {
 
-  const minutes =
-    Math.floor(seconds / 60);
-
-  const secs =
-    Math.floor(seconds % 60);
-
-  const tenths =
-    Math.floor((seconds % 1) * 10);
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  const tenths = Math.floor((seconds % 1) * 10);
 
   return (
     minutes +
@@ -540,24 +413,11 @@ function formatTime(seconds) {
     "." +
     tenths
   );
-
 }
 
 
-/*
-=============================================
-RUN SHOW CHECK 20 TIMES PER SECOND
-=============================================
-*/
+setInterval(updateShow, 100);
 
-setInterval(updateShow, 50);
-
-
-/*
-=============================================
-LOAD YOUTUBE API
-=============================================
-*/
 
 const tag =
   document.createElement("script");
