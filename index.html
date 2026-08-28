@@ -85,13 +85,9 @@ TRANQUIL NIGHT ENGINE
 
 let nightTimer = null;
 
-let fireflyTimer = null;
-
 let nightIndex = 0;
 
 let nightActive = false;
-
-let fireflyInProgress = false;
 
 
 const nightStates = [
@@ -130,7 +126,7 @@ function trigger(path) {
 
 /*
 ========================================
-START NIGHT SKY
+START TRANQUIL NIGHT
 ========================================
 */
 
@@ -155,10 +151,7 @@ function startNightSky() {
     setInterval(
       function () {
 
-        if (
-          !nightActive ||
-          fireflyInProgress
-        ) {
+        if (!nightActive) {
           return;
         }
 
@@ -177,23 +170,18 @@ function startNightSky() {
       6500
     );
 
-
-  scheduleNextFirefly();
-
 }
 
 
 /*
 ========================================
-STOP NIGHT SKY
+STOP TRANQUIL NIGHT
 ========================================
 */
 
 function stopNightSky() {
 
   nightActive = false;
-
-  fireflyInProgress = false;
 
 
   if (nightTimer !== null) {
@@ -205,104 +193,6 @@ function stopNightSky() {
     nightTimer = null;
 
   }
-
-
-  if (fireflyTimer !== null) {
-
-    clearTimeout(
-      fireflyTimer
-    );
-
-    fireflyTimer = null;
-
-  }
-
-}
-
-
-/*
-========================================
-FIREFLIES
-========================================
-*/
-
-function scheduleNextFirefly() {
-
-  if (!nightActive) {
-    return;
-  }
-
-
-  const delay =
-    12000 +
-    Math.random() * 8000;
-
-
-  fireflyTimer =
-    setTimeout(
-      function () {
-
-        runFirefly();
-
-      },
-
-      delay
-    );
-
-}
-
-
-function runFirefly() {
-
-  if (
-    !nightActive ||
-    fireflyInProgress
-  ) {
-
-    scheduleNextFirefly();
-
-    return;
-
-  }
-
-
-  fireflyInProgress = true;
-
-
-  const returnState =
-    nightStates[nightIndex];
-
-
-  trigger(
-    "/show/firefly"
-  );
-
-
-  setTimeout(
-    function () {
-
-      if (nightActive) {
-
-        trigger(
-          returnState
-        );
-
-      }
-
-
-      fireflyInProgress = false;
-
-
-      if (nightActive) {
-
-        scheduleNextFirefly();
-
-      }
-
-    },
-
-    1100
-  );
 
 }
 
@@ -434,196 +324,260 @@ const cues = [
     action: "/show/pirates"
   },
 
+  /*
+  ========================================
+  TRANQUIL NIGHT CONTINUES UNTIL 21:14
+  ========================================
+  */
+
   {
     id: "calm8",
     start: 1184,
-    end: 1288.5,
+    end: 1274,
     label: "✨ TRANQUIL NIGHT SKY",
     type: "night"
   },
 
 
-  // ==========================================
-  // STORM PREP
-  //
-  // Start before 21:30 so strips are already
-  // white at 100% and OFF when lightning begins.
-  // ==========================================
+  /*
+  ========================================
+  21:14
+  FIRST THUNDER RUMBLE
+
+  EVERYTHING GOES DARK.
+  ========================================
+  */
 
   {
-    id: "storm-arm",
-    start: 1288.5,
-    end: 1290.0,
-    label: "🌩 STORM APPROACHING",
+    id: "storm-blackout",
+    start: 1274,
+    end: 1290,
+    label: "🌩 THUNDER — DARKNESS",
     type: "event",
-    action: "/show/stormarm"
+    action: "/show/stormblackout"
   },
 
 
-  // ==========================================
-  // LIGHTNING
-  // 21:30 - 21:50
-  //
-  // Very short, abrupt flashes.
-  // ==========================================
+  /*
+  ========================================
+  21:30 - 21:32
 
-  // 21:30.2
+  DOUBLE FLASH
+  ========================================
+  */
+
   {
-    id: "storm01",
-    start: 1290.2,
-    end: 1290.7,
-    label: "⚡ LIGHTNING",
+    id: "lightning1",
+    start: 1290.0,
+    end: 1292.0,
+    label: "⚡⚡ LIGHTNING",
     type: "event",
-    action: "/show/snap"
+    action: "/show/doublesnap"
   },
 
-  // 21:31.2
+
+  /*
+  Darkness until the next strike.
+  No command is needed.
+  */
+
   {
-    id: "storm02",
-    start: 1291.2,
-    end: 1291.8,
-    label: "⚡ LIGHTNING",
-    type: "event",
-    action: "/show/flash"
+    id: "dark1",
+    start: 1292.0,
+    end: 1294.0,
+    label: "🌩 DARKNESS",
+    type: "dark"
   },
 
-  // 21:33.0
+
+  /*
+  ========================================
+  21:34 - 21:35
+
+  DOUBLE FLASH
+  ========================================
+  */
+
   {
-    id: "storm03",
-    start: 1293.0,
-    end: 1293.6,
-    label: "⚡ LIGHTNING",
+    id: "lightning2",
+    start: 1294.0,
+    end: 1296.0,
+    label: "⚡⚡ LIGHTNING",
     type: "event",
-    action: "/show/snap"
+    action: "/show/doublesnap"
   },
 
-  // 21:34.4
-  {
-    id: "storm04",
-    start: 1294.4,
-    end: 1295.0,
-    label: "⚡ LIGHTNING",
-    type: "event",
-    action: "/show/bigflash"
-  },
 
-  // 21:36.0
   {
-    id: "storm05",
+    id: "dark2",
     start: 1296.0,
-    end: 1297.0,
-    label: "⚡⚡ DOUBLE LIGHTNING",
-    type: "event",
-    action: "/show/doubleflash"
+    end: 1298.0,
+    label: "🌩 DARKNESS",
+    type: "dark"
   },
 
-  // 21:38.0
+
+  /*
+  ========================================
+  21:38
+
+  LARGE SINGLE FLASH
+  ========================================
+  */
+
   {
-    id: "storm06",
+    id: "lightning3",
     start: 1298.0,
-    end: 1298.6,
+    end: 1299.0,
+    label: "⚡ BIG LIGHTNING",
+    type: "event",
+    action: "/show/bigsnap"
+  },
+
+
+  {
+    id: "dark3",
+    start: 1299.0,
+    end: 1300.0,
+    label: "🌩 DARKNESS",
+    type: "dark"
+  },
+
+
+  /*
+  ========================================
+  21:40 - 21:41
+
+  DOUBLE FLASH
+  ========================================
+  */
+
+  {
+    id: "lightning4",
+    start: 1300.0,
+    end: 1302.0,
+    label: "⚡⚡ LIGHTNING",
+    type: "event",
+    action: "/show/doublesnap"
+  },
+
+
+  /*
+  ========================================
+  21:42
+
+  SINGLE FLASH
+  ========================================
+  */
+
+  {
+    id: "lightning5",
+    start: 1302.0,
+    end: 1303.0,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
   },
 
-  // 21:39.3
+
+  /*
+  ========================================
+  21:43 - 21:44
+
+  DOUBLE FLASH
+  ========================================
+  */
+
   {
-    id: "storm07",
-    start: 1299.3,
-    end: 1299.9,
-    label: "⚡ LIGHTNING",
+    id: "lightning6",
+    start: 1303.0,
+    end: 1305.0,
+    label: "⚡⚡ LIGHTNING",
     type: "event",
-    action: "/show/flash"
+    action: "/show/doublesnap"
   },
 
-  // 21:40.7
+
   {
-    id: "storm08",
-    start: 1300.7,
-    end: 1301.6,
-    label: "⚡⚡ CRACKLE",
-    type: "event",
-    action: "/show/crackle"
+    id: "dark4",
+    start: 1305.0,
+    end: 1306.0,
+    label: "🌩 DARKNESS",
+    type: "dark"
   },
 
-  // 21:42.5
+
+  /*
+  ========================================
+  21:46 - 21:47
+
+  DOUBLE FLASH
+  ========================================
+  */
+
   {
-    id: "storm09",
-    start: 1302.5,
-    end: 1303.1,
-    label: "⚡ LIGHTNING",
+    id: "lightning7",
+    start: 1306.0,
+    end: 1308.0,
+    label: "⚡⚡ LIGHTNING",
     type: "event",
-    action: "/show/snap"
+    action: "/show/doublesnap"
   },
 
-  // 21:43.7
-  {
-    id: "storm10",
-    start: 1303.7,
-    end: 1304.3,
-    label: "⚡ LIGHTNING",
-    type: "event",
-    action: "/show/bigflash"
-  },
 
-  // 21:45.2
   {
-    id: "storm11",
-    start: 1305.2,
-    end: 1305.8,
-    label: "⚡ LIGHTNING",
-    type: "event",
-    action: "/show/flash"
-  },
-
-  // 21:46.6
-  {
-    id: "storm12",
-    start: 1306.6,
-    end: 1307.6,
-    label: "⚡⚡ DOUBLE LIGHTNING",
-    type: "event",
-    action: "/show/doubleflash"
-  },
-
-  // 21:48.4
-  {
-    id: "storm13",
-    start: 1308.4,
+    id: "dark5",
+    start: 1308.0,
     end: 1309.0,
-    label: "⚡ LIGHTNING",
-    type: "event",
-    action: "/show/snap"
+    label: "🌩 DARKNESS",
+    type: "dark"
   },
 
-  // 21:49.4
+
+  /*
+  ========================================
+  21:49
+
+  FINAL BIG FLASH
+  ========================================
+  */
+
   {
-    id: "storm14",
-    start: 1309.4,
+    id: "lightning8",
+    start: 1309.0,
     end: 1310.0,
-    label: "⚡ LIGHTNING",
+    label: "⚡ FINAL BIG LIGHTNING",
     type: "event",
-    action: "/show/bigflash"
+    action: "/show/finalsnap"
   },
 
-  // 21:50.1 - LAST lightning effect
+
+  /*
+  ========================================
+  21:50 - 21:51
+
+  TOTAL DARKNESS
+  ========================================
+  */
+
   {
-    id: "storm-final",
-    start: 1310.1,
-    end: 1310.9,
-    label: "⚡⚡ FINAL LIGHTNING",
+    id: "storm-ending",
+    start: 1310.0,
+    end: 1311.0,
+    label: "🌩 DARKNESS",
     type: "event",
-    action: "/show/finalflash"
+    action: "/show/off"
   },
 
 
-  // ==========================================
-  // STORM IS OVER AT 21:51
-  //
-  // Immediately kill both strips and begin
-  // restoring tranquil night.
-  // ==========================================
+  /*
+  ========================================
+  21:51
+  STORM OVER
+
+  TRANQUIL SKY RETURNS.
+  ========================================
+  */
 
   {
     id: "night-return",
@@ -638,7 +592,7 @@ const cues = [
 
 /*
 ========================================
-ENTER CUE
+ENTER A CUE
 ========================================
 */
 
@@ -649,6 +603,10 @@ function enterCue(cue) {
     .innerHTML =
     cue.label;
 
+
+  /*
+  TRANQUIL NIGHT
+  */
 
   if (cue.type === "night") {
 
@@ -661,18 +619,32 @@ function enterCue(cue) {
   }
 
 
+  /*
+  DARKNESS BETWEEN LIGHTNING HITS
+
+  Do absolutely nothing.
+
+  The previous flash already switched
+  the lights OFF.
+  */
+
+  if (cue.type === "dark") {
+
+    stopNightSky();
+
+    return;
+
+  }
+
+
+  /*
+  STORM ENDS
+  */
+
   if (cue.type === "nightreset") {
 
     stopNightSky();
 
-
-    /*
-    nightreset starts by immediately
-    turning BOTH strips OFF.
-
-    That guarantees no lingering white
-    lightning after 21:51.
-    */
 
     trigger(
       "/show/nightreset"
@@ -680,8 +652,8 @@ function enterCue(cue) {
 
 
     /*
-    Restart the tranquil color cycling
-    only after reset has completed.
+    Allow reset to finish before resuming
+    the normal tranquil color cycle.
     */
 
     setTimeout(
@@ -691,7 +663,7 @@ function enterCue(cue) {
 
       },
 
-      4200
+      4000
     );
 
 
@@ -699,6 +671,10 @@ function enterCue(cue) {
 
   }
 
+
+  /*
+  SPECIAL SCENE / LIGHTNING
+  */
 
   stopNightSky();
 
@@ -740,6 +716,11 @@ function updateShow() {
     "Video time: " +
     formatTime(t);
 
+
+  /*
+  Detect the video looping back
+  to the beginning.
+  */
 
   if (
     previousVideoTime > 1300 &&
@@ -796,7 +777,7 @@ function updateShow() {
 
 /*
 ========================================
-YOUTUBE
+YOUTUBE PLAYER
 ========================================
 */
 
