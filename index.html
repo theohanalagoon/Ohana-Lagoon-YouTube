@@ -53,13 +53,6 @@ const WORKER =
 let player;
 let lastCue = null;
 
-
-/*
-========================================
-HELPER: CALL CLOUDFLARE WORKER
-========================================
-*/
-
 async function trigger(path) {
   try {
     await fetch(WORKER + path, {
@@ -69,13 +62,6 @@ async function trigger(path) {
     console.log("Worker error:", error);
   }
 }
-
-
-/*
-========================================
-SHOW CUES
-========================================
-*/
 
 const cues = [
 
@@ -210,110 +196,62 @@ const cues = [
   {
     id: "lightning1",
     start: 1291,
-    end: 1292,
+    end: 1294.5,
     label: "⚡ LIGHTNING 1",
     action: "/show/lightning1"
   },
 
   {
-    id: "storm2",
-    start: 1292,
-    end: 1295,
-    label: "🌩 STORM",
-    action: "/show/storm"
-  },
-
-  {
     id: "lightning2",
     start: 1295,
-    end: 1296,
+    end: 1297.5,
     label: "⚡ LIGHTNING 2",
     action: "/show/lightning2"
   },
 
   {
-    id: "storm3",
-    start: 1296,
-    end: 1298,
-    label: "🌩 STORM",
-    action: "/show/storm"
-  },
-
-  {
     id: "lightning3",
     start: 1298,
-    end: 1299,
+    end: 1299.8,
     label: "⚡ LIGHTNING 3",
     action: "/show/lightning3"
   },
 
   {
-    id: "storm4",
-    start: 1299,
-    end: 1300,
-    label: "🌩 STORM",
-    action: "/show/storm"
-  },
-
-  {
     id: "lightning4",
     start: 1300,
-    end: 1301,
+    end: 1302.6,
     label: "⚡ LIGHTNING 4",
     action: "/show/lightning4"
   },
 
   {
-    id: "storm5",
-    start: 1301,
-    end: 1303,
-    label: "🌩 STORM",
-    action: "/show/storm"
-  },
-
-  {
     id: "lightning5",
     start: 1303,
-    end: 1304,
+    end: 1305.6,
     label: "⚡ LIGHTNING 5",
     action: "/show/lightning5"
   },
 
   {
-    id: "storm6",
-    start: 1304,
-    end: 1306,
-    label: "🌩 STORM",
-    action: "/show/storm"
-  },
-
-  {
     id: "lightning6",
     start: 1306,
-    end: 1307,
+    end: 1309.5,
     label: "⚡ LIGHTNING 6",
     action: "/show/lightning6"
   },
 
   {
-    id: "storm7",
-    start: 1307,
-    end: 1310,
-    label: "🌩 STORM",
-    action: "/show/storm"
-  },
-
-  {
     id: "final-lightning",
     start: 1310,
-    end: 1312,
+    end: 1313.5,
     label: "⚡⚡ FINAL LIGHTNING",
     action: "/show/lightningFinal"
   },
 
   {
     id: "dark-after",
-    start: 1312,
+    start: 1313.5,
     end: 1314,
     label: "BLACKOUT",
     action: "/show/off"
@@ -329,15 +267,7 @@ const cues = [
 
 ];
 
-
-/*
-========================================
-SHOW ENGINE
-========================================
-*/
-
 function updateShow() {
-
   if (!player ||
       typeof player.getCurrentTime !== "function") {
     return;
@@ -368,17 +298,8 @@ function updateShow() {
   }
 }
 
-
-/*
-========================================
-YOUTUBE
-========================================
-*/
-
 function onYouTubeIframeAPIReady() {
-
   player = new YT.Player("player", {
-
     videoId: "LZvoiZrAd2U",
 
     playerVars: {
@@ -388,20 +309,15 @@ function onYouTubeIframeAPIReady() {
     },
 
     events: {
-
       onReady: function () {
         document.getElementById("time").innerHTML =
           "Player ready — press PLAY";
       }
-
     }
-
   });
 }
 
-
 function formatTime(seconds) {
-
   const minutes = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   const tenths = Math.floor((seconds % 1) * 10);
@@ -415,9 +331,7 @@ function formatTime(seconds) {
   );
 }
 
-
 setInterval(updateShow, 100);
-
 
 const tag =
   document.createElement("script");
