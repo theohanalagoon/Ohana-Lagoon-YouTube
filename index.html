@@ -1,72 +1,97 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Ohana Lagoon Nighttime Show</title>
+<meta charset="UTF-8">
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      min-height: 100%;
-      background: #000;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-    #player {
-      width: 100%;
-      height: 78vh;
-    }
+<title>Ohana Lagoon Nighttime Show</title>
 
-    #status {
-      padding: 10px;
-      text-align: center;
-      background: #111;
-      font-size: 16px;
-    }
+<style>
 
-    #cue {
-      font-weight: bold;
-      margin-top: 4px;
-    }
-  </style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: black;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+#player {
+  width: 100%;
+  height: 78vh;
+}
+
+#status {
+  padding: 10px;
+  text-align: center;
+  background: #111;
+}
+
+#cue {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
 <div id="player"></div>
 
 <div id="status">
-  <div id="time">Waiting for player...</div>
-  <div id="cue">SHOW READY</div>
+
+  <div id="time">
+    Waiting for player...
+  </div>
+
+  <div id="cue">
+    SHOW READY
+  </div>
+
 </div>
+
 
 <script>
 
 const WORKER =
-  "https://ohanagoveebridge.theohanalagoon.workers.dev";
+"https://ohanagoveebridge.theohanalagoon.workers.dev";
 
 let player;
+
 let lastCue = null;
 
-async function trigger(path) {
-  try {
-    await fetch(WORKER + path, {
-      method: "GET"
+
+function trigger(path) {
+
+  fetch(WORKER + path)
+    .catch(error => {
+      console.log(error);
     });
-  } catch (error) {
-    console.log("Worker error:", error);
-  }
+
 }
+
+
+/*
+========================================
+SHOW CUES
+========================================
+*/
 
 const cues = [
 
   {
-    id: "calm-start",
+    id: "calm1",
     start: 0,
     end: 140,
     label: "🌴 CALM NIGHT",
@@ -82,7 +107,7 @@ const cues = [
   },
 
   {
-    id: "calm-2",
+    id: "calm2",
     start: 151,
     end: 363,
     label: "🌴 CALM NIGHT",
@@ -98,7 +123,7 @@ const cues = [
   },
 
   {
-    id: "calm-3",
+    id: "calm3",
     start: 374,
     end: 525,
     label: "🌴 CALM NIGHT",
@@ -114,7 +139,7 @@ const cues = [
   },
 
   {
-    id: "calm-4",
+    id: "calm4",
     start: 533,
     end: 675,
     label: "🌴 CALM NIGHT",
@@ -125,12 +150,12 @@ const cues = [
     id: "lanterns",
     start: 675,
     end: 696,
-    label: "🏮 TANGLED LANTERNS",
+    label: "🏮 TANGLED",
     action: "/show/lanterns"
   },
 
   {
-    id: "calm-5",
+    id: "calm5",
     start: 696,
     end: 835,
     label: "🌴 CALM NIGHT",
@@ -146,7 +171,7 @@ const cues = [
   },
 
   {
-    id: "calm-6",
+    id: "calm6",
     start: 862,
     end: 997,
     label: "🌴 CALM NIGHT",
@@ -157,12 +182,12 @@ const cues = [
     id: "kakamora",
     start: 997,
     end: 1008,
-    label: "🥥 KAKAMORA ATTACK",
+    label: "🥥 KAKAMORA",
     action: "/show/kakamora"
   },
 
   {
-    id: "calm-7",
+    id: "calm7",
     start: 1008,
     end: 1159,
     label: "🌴 CALM NIGHT",
@@ -178,87 +203,148 @@ const cues = [
   },
 
   {
-    id: "calm-8",
+    id: "calm8",
     start: 1184,
     end: 1284,
     label: "🌴 CALM NIGHT",
     action: "/show/amber"
   },
 
+
+  // ==========================================
+  // THUNDERSTORM
+  // ==========================================
+
   {
-    id: "storm",
+    id: "storm-arm",
     start: 1284,
-    end: 1291,
+    end: 1287.5,
     label: "🌩 STORM APPROACHING",
-    action: "/show/storm"
+    action: "/show/stormarm"
   },
 
+
+  // 21:28-ish
   {
-    id: "lightning1",
-    start: 1291,
-    end: 1294.5,
-    label: "⚡ LIGHTNING 1",
-    action: "/show/lightning1"
+    id: "flash0",
+    start: 1288.0,
+    end: 1288.6,
+    label: "⚡ DISTANT LIGHTNING",
+    action: "/show/flash"
   },
 
+
+  // 21:31
   {
-    id: "lightning2",
-    start: 1295,
-    end: 1297.5,
-    label: "⚡ LIGHTNING 2",
-    action: "/show/lightning2"
+    id: "flash1",
+    start: 1291.0,
+    end: 1291.6,
+    label: "⚡ LIGHTNING",
+    action: "/show/bigflash"
   },
 
+
+  // extra strike
   {
-    id: "lightning3",
-    start: 1298,
-    end: 1299.8,
-    label: "⚡ LIGHTNING 3",
-    action: "/show/lightning3"
+    id: "flash2",
+    start: 1293.5,
+    end: 1294.1,
+    label: "⚡ LIGHTNING",
+    action: "/show/flash"
   },
 
+
+  // 21:35
   {
-    id: "lightning4",
-    start: 1300,
+    id: "flash3",
+    start: 1295.2,
+    end: 1296.5,
+    label: "⚡⚡ DOUBLE LIGHTNING",
+    action: "/show/doubleflash"
+  },
+
+
+  // 21:38
+  {
+    id: "flash4",
+    start: 1298.0,
+    end: 1298.6,
+    label: "⚡ LIGHTNING",
+    action: "/show/flash"
+  },
+
+
+  // 21:40
+  {
+    id: "flash5",
+    start: 1300.3,
+    end: 1300.9,
+    label: "⚡ LIGHTNING",
+    action: "/show/bigflash"
+  },
+
+
+  // extra strike
+  {
+    id: "flash6",
+    start: 1302.0,
     end: 1302.6,
-    label: "⚡ LIGHTNING 4",
-    action: "/show/lightning4"
+    label: "⚡ LIGHTNING",
+    action: "/show/flash"
   },
 
+
+  // 21:43
   {
-    id: "lightning5",
-    start: 1303,
-    end: 1305.6,
-    label: "⚡ LIGHTNING 5",
-    action: "/show/lightning5"
+    id: "flash7",
+    start: 1303.3,
+    end: 1304.0,
+    label: "⚡ LIGHTNING",
+    action: "/show/bigflash"
   },
 
+
+  // 21:46
   {
-    id: "lightning6",
-    start: 1306,
-    end: 1309.5,
-    label: "⚡ LIGHTNING 6",
-    action: "/show/lightning6"
+    id: "flash8",
+    start: 1306.0,
+    end: 1306.7,
+    label: "⚡ LIGHTNING",
+    action: "/show/bigflash"
   },
 
+
+  // extra strike
   {
-    id: "final-lightning",
-    start: 1310,
-    end: 1313.5,
-    label: "⚡⚡ FINAL LIGHTNING",
-    action: "/show/lightningFinal"
+    id: "flash9",
+    start: 1308.4,
+    end: 1309.0,
+    label: "⚡ LIGHTNING",
+    action: "/show/flash"
   },
 
+
+  // 21:50 finale
   {
-    id: "dark-after",
-    start: 1313.5,
+    id: "flash10",
+    start: 1310.0,
+    end: 1312.0,
+    label: "⚡⚡ FINAL STRIKE",
+    action: "/show/finalflash"
+  },
+
+
+  {
+    id: "blackout",
+    start: 1312,
     end: 1314,
-    label: "BLACKOUT",
+    label: "DARKNESS",
     action: "/show/off"
   },
 
+
   {
-    id: "calm-return",
+    id: "return",
     start: 1314,
     end: 99999,
     label: "🌴 CALM NIGHT RETURNS",
@@ -267,87 +353,166 @@ const cues = [
 
 ];
 
+
 function updateShow() {
-  if (!player ||
-      typeof player.getCurrentTime !== "function") {
+
+  if (
+    !player ||
+    typeof player.getCurrentTime !== "function"
+  ) {
     return;
   }
 
-  const t = player.getCurrentTime();
+  const t =
+    player.getCurrentTime();
 
-  document.getElementById("time").innerHTML =
-    "Video time: " + formatTime(t);
+
+  document.getElementById("time")
+    .innerHTML =
+    "Video time: " +
+    formatTime(t);
+
 
   let active = null;
 
+
   for (const cue of cues) {
-    if (t >= cue.start && t < cue.end) {
+
+    if (
+      t >= cue.start &&
+      t < cue.end
+    ) {
+
       active = cue;
+
       break;
     }
+
   }
 
-  if (!active) return;
 
-  document.getElementById("cue").innerHTML =
+  if (!active) {
+    return;
+  }
+
+
+  document.getElementById("cue")
+    .innerHTML =
     active.label;
 
+
   if (active.id !== lastCue) {
-    lastCue = active.id;
-    trigger(active.action);
+
+    lastCue =
+      active.id;
+
+    trigger(
+      active.action
+    );
+
   }
+
 }
+
 
 function onYouTubeIframeAPIReady() {
-  player = new YT.Player("player", {
-    videoId: "LZvoiZrAd2U",
 
-    playerVars: {
-      controls: 1,
-      playsinline: 1,
-      rel: 0
-    },
+  player =
+    new YT.Player(
+      "player",
+      {
 
-    events: {
-      onReady: function () {
-        document.getElementById("time").innerHTML =
-          "Player ready — press PLAY";
+        videoId:
+          "LZvoiZrAd2U",
+
+        playerVars: {
+          controls: 1,
+          playsinline: 1,
+          rel: 0
+        },
+
+        events: {
+
+          onReady:
+            function () {
+
+              document
+                .getElementById("time")
+                .innerHTML =
+                "Player ready — press PLAY";
+
+            }
+
+        }
+
       }
-    }
-  });
+    );
+
 }
 
+
 function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  const tenths = Math.floor((seconds % 1) * 10);
+
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
+
+  const secs =
+    Math.floor(
+      seconds % 60
+    );
+
+  const tenths =
+    Math.floor(
+      (seconds % 1) * 10
+    );
+
 
   return (
     minutes +
     ":" +
-    secs.toString().padStart(2, "0") +
+    secs
+      .toString()
+      .padStart(2, "0") +
     "." +
     tenths
   );
+
 }
 
-setInterval(updateShow, 100);
+
+setInterval(
+  updateShow,
+  100
+);
+
 
 const tag =
-  document.createElement("script");
+  document.createElement(
+    "script"
+  );
 
 tag.src =
   "https://www.youtube.com/iframe_api";
 
-const firstScriptTag =
-  document.getElementsByTagName("script")[0];
 
-firstScriptTag.parentNode.insertBefore(
-  tag,
-  firstScriptTag
-);
+const firstScriptTag =
+  document
+    .getElementsByTagName(
+      "script"
+    )[0];
+
+
+firstScriptTag
+  .parentNode
+  .insertBefore(
+    tag,
+    firstScriptTag
+  );
 
 </script>
 
 </body>
+
 </html>
