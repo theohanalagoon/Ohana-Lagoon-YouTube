@@ -50,7 +50,6 @@ body {
 
 <div id="player"></div>
 
-
 <div id="status">
 
   <div id="time">
@@ -127,20 +126,10 @@ function startNightSky() {
   nightActive = true;
 
 
-  /*
-  Turn both strips on in tranquil blue.
-  */
-
   trigger(
     "/show/nightstart"
   );
 
-
-  /*
-  Periodically reinforce the blue state.
-
-  This does NOT send an ON command.
-  */
 
   nightTimer =
     setInterval(
@@ -197,24 +186,84 @@ SHOW CUES
 
 const cues = [
 
+  // =============================================
+  // 0:00 - 2:11
+  // TRANQUIL BLUE
+  // =============================================
+
   {
     id: "calm1",
     start: 0,
-    end: 140,
+    end: 131,
     label: "🌊 TRANQUIL BLUE",
     type: "night"
   },
 
 
+  // =============================================
+  // 2:11
+  // ACOUSTIC GUITAR BEGINS
+  // MICKEY HEADS / VOLCANO
+  // =============================================
+
   {
-    id: "volcano",
-    start: 140,
-    end: 151,
-    label: "🌋 VOLCANO",
+    id: "mickey1",
+    start: 131,
+    end: 135,
+    label: "🎸 MICKEY — AQUA",
     type: "event",
-    action: "/show/volcano"
+    action: "/show/mickey1"
   },
 
+
+  // 2:15
+  {
+    id: "mickey2",
+    start: 135,
+    end: 139,
+    label: "🎸 MICKEY — LAVENDER",
+    type: "event",
+    action: "/show/mickey2"
+  },
+
+
+  // 2:19
+  {
+    id: "mickey3",
+    start: 139,
+    end: 143,
+    label: "🎸 MICKEY — PEACH",
+    type: "event",
+    action: "/show/mickey3"
+  },
+
+
+  // 2:23
+  {
+    id: "mickey4",
+    start: 143,
+    end: 147,
+    label: "🎸 MICKEY — SKY BLUE",
+    type: "event",
+    action: "/show/mickey4"
+  },
+
+
+  // 2:27
+  {
+    id: "mickey5",
+    start: 147,
+    end: 151,
+    label: "🎸 MICKEY — SOFT PINK",
+    type: "event",
+    action: "/show/mickey5"
+  },
+
+
+  // =============================================
+  // 2:31
+  // TRANQUIL BLUE RETURNS
+  // =============================================
 
   {
     id: "calm2",
@@ -224,6 +273,11 @@ const cues = [
     type: "night"
   },
 
+
+  // =============================================
+  // 6:03 - 6:14
+  // NEMO
+  // =============================================
 
   {
     id: "nemo",
@@ -244,15 +298,103 @@ const cues = [
   },
 
 
+  // =============================================
+  // MILLENNIUM FALCON
+  // 8:45 - 8:53
+  // =============================================
+
+  // 8:45.0
   {
-    id: "falcon",
-    start: 525,
-    end: 533,
-    label: "🚀 MILLENNIUM FALCON",
+    id: "falcon-base",
+    start: 525.0,
+    end: 526.0,
+    label: "🚀 FALCON — SPACE BLUE",
     type: "event",
-    action: "/show/falcon"
+    action: "/show/falconbase"
   },
 
+
+  // 8:46.0
+  {
+    id: "falcon-flash1",
+    start: 526.0,
+    end: 527.2,
+    label: "⚡ FALCON FLASH",
+    type: "event",
+    action: "/show/falconflash"
+  },
+
+
+  // 8:47.2
+  {
+    id: "falcon-base2",
+    start: 527.2,
+    end: 528.4,
+    label: "🚀 FALCON — SPACE BLUE",
+    type: "event",
+    action: "/show/falconbase"
+  },
+
+
+  // 8:48.4
+  {
+    id: "falcon-flash2",
+    start: 528.4,
+    end: 529.5,
+    label: "⚡ FALCON FLASH",
+    type: "event",
+    action: "/show/falconflash"
+  },
+
+
+  // 8:49.5
+  {
+    id: "falcon-base3",
+    start: 529.5,
+    end: 530.5,
+    label: "🚀 FALCON — SPACE BLUE",
+    type: "event",
+    action: "/show/falconbase"
+  },
+
+
+  // 8:50.5
+  {
+    id: "falcon-bigflash",
+    start: 530.5,
+    end: 531.5,
+    label: "⚡ FALCON BIG FLASH",
+    type: "event",
+    action: "/show/falconbigflash"
+  },
+
+
+  // 8:51.5
+  {
+    id: "falcon-base4",
+    start: 531.5,
+    end: 532.2,
+    label: "🚀 FALCON — SPACE BLUE",
+    type: "event",
+    action: "/show/falconbase"
+  },
+
+
+  // 8:52.2
+  {
+    id: "falcon-flash3",
+    start: 532.2,
+    end: 533.0,
+    label: "⚡ FALCON FINAL FLASH",
+    type: "event",
+    action: "/show/falconflash"
+  },
+
+
+  // =============================================
+  // 8:53
+  // TRANQUIL BLUE
+  // =============================================
 
   {
     id: "calm4",
@@ -262,6 +404,10 @@ const cues = [
     type: "night"
   },
 
+
+  // =============================================
+  // TANGLED
+  // =============================================
 
   {
     id: "lanterns",
@@ -282,6 +428,10 @@ const cues = [
   },
 
 
+  // =============================================
+  // PIZZA PLANET
+  // =============================================
+
   {
     id: "pizza",
     start: 835,
@@ -301,6 +451,10 @@ const cues = [
   },
 
 
+  // =============================================
+  // KAKAMORA
+  // =============================================
+
   {
     id: "kakamora",
     start: 997,
@@ -319,6 +473,10 @@ const cues = [
     type: "night"
   },
 
+
+  // =============================================
+  // PIRATES
+  // =============================================
 
   {
     id: "pirates",
@@ -340,8 +498,7 @@ const cues = [
 
 
   // =============================================
-  // 21:14
-  // TOTAL DARKNESS
+  // 21:14 BLACKOUT
   // =============================================
 
   {
@@ -355,8 +512,7 @@ const cues = [
 
 
   // =============================================
-  // 21:29.6
-  // ARM LIGHTNING
+  // 21:29.6 ARM
   // =============================================
 
   {
@@ -382,7 +538,6 @@ const cues = [
     action: "/show/snap"
   },
 
-
   {
     id: "dark-a",
     start: 1290.3,
@@ -404,7 +559,6 @@ const cues = [
     type: "event",
     action: "/show/snap"
   },
-
 
   {
     id: "dark-b",
@@ -428,7 +582,6 @@ const cues = [
     action: "/show/snap"
   },
 
-
   {
     id: "dark-c",
     start: 1294.3,
@@ -450,7 +603,6 @@ const cues = [
     type: "event",
     action: "/show/snap"
   },
-
 
   {
     id: "dark-d",
@@ -474,7 +626,6 @@ const cues = [
     action: "/show/bigsnap"
   },
 
-
   {
     id: "dark-e",
     start: 1298.3,
@@ -496,7 +647,6 @@ const cues = [
     type: "event",
     action: "/show/snap"
   },
-
 
   {
     id: "dark-f",
@@ -520,7 +670,6 @@ const cues = [
     action: "/show/snap"
   },
 
-
   {
     id: "dark-g",
     start: 1301.3,
@@ -542,7 +691,6 @@ const cues = [
     type: "event",
     action: "/show/snap"
   },
-
 
   {
     id: "dark-h",
@@ -566,7 +714,6 @@ const cues = [
     action: "/show/snap"
   },
 
-
   {
     id: "dark-i",
     start: 1303.3,
@@ -588,7 +735,6 @@ const cues = [
     type: "event",
     action: "/show/snap"
   },
-
 
   {
     id: "dark-j",
@@ -612,7 +758,6 @@ const cues = [
     action: "/show/snap"
   },
 
-
   {
     id: "dark-k",
     start: 1306.3,
@@ -634,7 +779,6 @@ const cues = [
     type: "event",
     action: "/show/snap"
   },
-
 
   {
     id: "dark-l",
@@ -659,11 +803,6 @@ const cues = [
   },
 
 
-  // =============================================
-  // 21:49.3 - 21:50
-  // DARKNESS
-  // =============================================
-
   {
     id: "final-darkness",
     start: 1309.3,
@@ -675,8 +814,7 @@ const cues = [
 
 
   // =============================================
-  // 21:50
-  // TRANQUIL BLUE RETURNS
+  // 21:50 TRANQUIL BLUE RETURNS
   // =============================================
 
   {
