@@ -83,7 +83,14 @@ let previousVideoTime = 0;
 
 /*
 =================================================
-TRANQUIL NIGHT ENGINE
+TRANQUIL ENGINE
+
+Alternates:
+
+BLUE
+YELLOW
+BLUE
+YELLOW
 =================================================
 */
 
@@ -96,19 +103,9 @@ let nightActive = false;
 
 const nightStates = [
 
-  "/show/night1",
+  "/show/nightblue",
 
-  "/show/night2",
-
-  "/show/night4",
-
-  "/show/night1",
-
-  "/show/night3",
-
-  "/show/night2",
-
-  "/show/night4"
+  "/show/nightyellow"
 
 ];
 
@@ -134,7 +131,7 @@ function trigger(path) {
 
 /*
 =================================================
-START TRANQUIL NIGHT
+START TRANQUIL LIGHTING
 =================================================
 */
 
@@ -151,8 +148,7 @@ function startNightSky() {
 
 
   /*
-  This is the ONLY tranquil-night command
-  that powers the lights ON.
+  Start in BLUE.
   */
 
   trigger(
@@ -161,8 +157,8 @@ function startNightSky() {
 
 
   /*
-  Subsequent tranquil changes cannot
-  turn the lights ON.
+  Alternate BLUE / YELLOW
+  every 5.5 seconds.
   */
 
   nightTimer =
@@ -187,7 +183,7 @@ function startNightSky() {
 
       },
 
-      6500
+      5500
     );
 
 }
@@ -195,7 +191,7 @@ function startNightSky() {
 
 /*
 =================================================
-STOP TRANQUIL NIGHT
+STOP TRANQUIL LIGHTING
 =================================================
 */
 
@@ -236,13 +232,12 @@ const cues = [
     id: "calm1",
     start: 0,
     end: 140,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 2:20 - 2:31
   // VOLCANO
   // =============================================
 
@@ -260,13 +255,12 @@ const cues = [
     id: "calm2",
     start: 151,
     end: 363,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 6:03 - 6:14
   // NEMO
   // =============================================
 
@@ -284,13 +278,12 @@ const cues = [
     id: "calm3",
     start: 374,
     end: 525,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 8:45 - 8:53
   // FALCON
   // =============================================
 
@@ -308,13 +301,12 @@ const cues = [
     id: "calm4",
     start: 533,
     end: 675,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 11:15 - 11:36
   // TANGLED
   // =============================================
 
@@ -332,13 +324,12 @@ const cues = [
     id: "calm5",
     start: 696,
     end: 835,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 13:55 - 14:22
   // PIZZA PLANET
   // =============================================
 
@@ -356,13 +347,12 @@ const cues = [
     id: "calm6",
     start: 862,
     end: 997,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 16:37 - 16:48
   // KAKAMORA
   // =============================================
 
@@ -380,13 +370,12 @@ const cues = [
     id: "calm7",
     start: 1008,
     end: 1159,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
 
   // =============================================
-  // 19:19 - 19:44
   // PIRATES
   // =============================================
 
@@ -401,15 +390,14 @@ const cues = [
 
 
   // =============================================
-  // 19:44 - 21:14
-  // TRANQUIL
+  // TRANQUIL UNTIL 21:14
   // =============================================
 
   {
     id: "calm8",
     start: 1184,
     end: 1274,
-    label: "✨ TRANQUIL NIGHT SKY",
+    label: "🌊 TRANQUIL BLUE / GOLD",
     type: "night"
   },
 
@@ -419,16 +407,14 @@ const cues = [
   //
   // FIRST THUNDER.
   //
-  // PURE BLACKOUT.
-  //
-  // Both strips remain completely OFF.
+  // TOTAL DARKNESS.
   // =============================================
 
   {
     id: "storm-blackout",
     start: 1274.0,
     end: 1289.6,
-    label: "🌩 THUNDER — TOTAL DARKNESS",
+    label: "🌩 TOTAL DARKNESS",
     type: "event",
     action: "/show/stormblackout"
   },
@@ -437,9 +423,7 @@ const cues = [
   // =============================================
   // 21:29.6
   //
-  // PREPARE LIGHTNING.
-  //
-  // This occurs immediately before first strike.
+  // ARM LIGHTNING
   // =============================================
 
   {
@@ -454,13 +438,12 @@ const cues = [
 
   // =============================================
   // 21:30
-  // FIRST FLASH
   // =============================================
 
   {
     id: "flash-2130",
     start: 1290.0,
-    end: 1290.4,
+    end: 1290.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -469,7 +452,7 @@ const cues = [
 
   {
     id: "dark-a",
-    start: 1290.4,
+    start: 1290.3,
     end: 1292.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -478,13 +461,12 @@ const cues = [
 
   // =============================================
   // 21:32
-  // SECOND FLASH
   // =============================================
 
   {
     id: "flash-2132",
     start: 1292.0,
-    end: 1292.4,
+    end: 1292.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -493,7 +475,7 @@ const cues = [
 
   {
     id: "dark-b",
-    start: 1292.4,
+    start: 1292.3,
     end: 1294.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -502,13 +484,12 @@ const cues = [
 
   // =============================================
   // 21:34
-  // FLASH
   // =============================================
 
   {
     id: "flash-2134",
     start: 1294.0,
-    end: 1294.4,
+    end: 1294.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -517,7 +498,7 @@ const cues = [
 
   {
     id: "dark-c",
-    start: 1294.4,
+    start: 1294.3,
     end: 1295.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -526,13 +507,12 @@ const cues = [
 
   // =============================================
   // 21:35
-  // SECOND FLASH
   // =============================================
 
   {
     id: "flash-2135",
     start: 1295.0,
-    end: 1295.4,
+    end: 1295.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -541,7 +521,7 @@ const cues = [
 
   {
     id: "dark-d",
-    start: 1295.4,
+    start: 1295.3,
     end: 1298.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -550,13 +530,13 @@ const cues = [
 
   // =============================================
   // 21:38
-  // LARGE FLASH
+  // BIG FLASH
   // =============================================
 
   {
     id: "flash-2138",
     start: 1298.0,
-    end: 1298.5,
+    end: 1298.3,
     label: "⚡ BIG LIGHTNING",
     type: "event",
     action: "/show/bigsnap"
@@ -565,7 +545,7 @@ const cues = [
 
   {
     id: "dark-e",
-    start: 1298.5,
+    start: 1298.3,
     end: 1300.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -574,13 +554,12 @@ const cues = [
 
   // =============================================
   // 21:40
-  // FLASH
   // =============================================
 
   {
     id: "flash-2140",
     start: 1300.0,
-    end: 1300.4,
+    end: 1300.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -589,7 +568,7 @@ const cues = [
 
   {
     id: "dark-f",
-    start: 1300.4,
+    start: 1300.3,
     end: 1301.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -598,13 +577,12 @@ const cues = [
 
   // =============================================
   // 21:41
-  // SECOND FLASH
   // =============================================
 
   {
     id: "flash-2141",
     start: 1301.0,
-    end: 1301.4,
+    end: 1301.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -613,7 +591,7 @@ const cues = [
 
   {
     id: "dark-g",
-    start: 1301.4,
+    start: 1301.3,
     end: 1302.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -622,13 +600,12 @@ const cues = [
 
   // =============================================
   // 21:42
-  // SINGLE
   // =============================================
 
   {
     id: "flash-2142",
     start: 1302.0,
-    end: 1302.4,
+    end: 1302.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -637,7 +614,7 @@ const cues = [
 
   {
     id: "dark-h",
-    start: 1302.4,
+    start: 1302.3,
     end: 1303.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -646,13 +623,12 @@ const cues = [
 
   // =============================================
   // 21:43
-  // FLASH
   // =============================================
 
   {
     id: "flash-2143",
     start: 1303.0,
-    end: 1303.4,
+    end: 1303.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -661,7 +637,7 @@ const cues = [
 
   {
     id: "dark-i",
-    start: 1303.4,
+    start: 1303.3,
     end: 1304.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -670,13 +646,12 @@ const cues = [
 
   // =============================================
   // 21:44
-  // SECOND FLASH
   // =============================================
 
   {
     id: "flash-2144",
     start: 1304.0,
-    end: 1304.4,
+    end: 1304.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -685,7 +660,7 @@ const cues = [
 
   {
     id: "dark-j",
-    start: 1304.4,
+    start: 1304.3,
     end: 1306.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -694,13 +669,12 @@ const cues = [
 
   // =============================================
   // 21:46
-  // FLASH
   // =============================================
 
   {
     id: "flash-2146",
     start: 1306.0,
-    end: 1306.4,
+    end: 1306.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -709,7 +683,7 @@ const cues = [
 
   {
     id: "dark-k",
-    start: 1306.4,
+    start: 1306.3,
     end: 1307.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -718,13 +692,12 @@ const cues = [
 
   // =============================================
   // 21:47
-  // SECOND FLASH
   // =============================================
 
   {
     id: "flash-2147",
     start: 1307.0,
-    end: 1307.4,
+    end: 1307.3,
     label: "⚡ LIGHTNING",
     type: "event",
     action: "/show/snap"
@@ -733,7 +706,7 @@ const cues = [
 
   {
     id: "dark-l",
-    start: 1307.4,
+    start: 1307.3,
     end: 1309.0,
     label: "🌩 DARKNESS",
     type: "dark"
@@ -748,7 +721,7 @@ const cues = [
   {
     id: "flash-2149",
     start: 1309.0,
-    end: 1309.5,
+    end: 1309.3,
     label: "⚡ FINAL BIG LIGHTNING",
     type: "event",
     action: "/show/finalsnap"
@@ -756,31 +729,33 @@ const cues = [
 
 
   // =============================================
-  // 21:49.5 - 21:51
-  // TOTAL DARKNESS
+  // 21:49.3 - 21:50
+  //
+  // TOTAL DARKNESS.
+  // NO MORE WHITE FLASHES.
   // =============================================
 
   {
     id: "final-darkness",
-    start: 1309.5,
-    end: 1311.0,
-    label: "🌩 TOTAL DARKNESS",
+    start: 1309.3,
+    end: 1310.0,
+    label: "🌩 DARKNESS",
     type: "event",
     action: "/show/off"
   },
 
 
   // =============================================
-  // 21:51
+  // 21:50 EXACTLY
   //
-  // STORM OVER.
+  // TRANQUIL LIGHTING RETURNS.
   // =============================================
 
   {
     id: "night-return",
-    start: 1311.0,
+    start: 1310.0,
     end: 99999,
-    label: "✨ TRANQUIL NIGHT RETURNS",
+    label: "🌊 TRANQUIL LIGHTING RETURNS",
     type: "nightreset"
   }
 
@@ -803,9 +778,9 @@ function enterCue(cue) {
     cue.label;
 
 
-  // ---------------------------------------------
-  // NORMAL NIGHT
-  // ---------------------------------------------
+  // =============================================
+  // NORMAL TRANQUIL LIGHTING
+  // =============================================
 
   if (
     cue.type === "night"
@@ -820,9 +795,9 @@ function enterCue(cue) {
   }
 
 
-  // ---------------------------------------------
-  // DARKNESS
-  // ---------------------------------------------
+  // =============================================
+  // DARKNESS BETWEEN STRIKES
+  // =============================================
 
   if (
     cue.type === "dark"
@@ -830,21 +805,14 @@ function enterCue(cue) {
 
     stopNightSky();
 
-    /*
-    No command.
-
-    Previous lightning cue already
-    powered both strips OFF.
-    */
-
     return;
 
   }
 
 
-  // ---------------------------------------------
-  // POST-STORM
-  // ---------------------------------------------
+  // =============================================
+  // STORM FINISHED
+  // =============================================
 
   if (
     cue.type === "nightreset"
@@ -859,8 +827,8 @@ function enterCue(cue) {
 
 
     /*
-    Restart tranquil cycling shortly
-    after the post-storm return.
+    Resume alternating BLUE/YELLOW
+    shortly after the initial blue return.
     */
 
     setTimeout(
@@ -870,7 +838,7 @@ function enterCue(cue) {
 
       },
 
-      1800
+      1400
     );
 
 
@@ -879,9 +847,9 @@ function enterCue(cue) {
   }
 
 
-  // ---------------------------------------------
-  // SCENE / BLACKOUT / LIGHTNING
-  // ---------------------------------------------
+  // =============================================
+  // SCENE / LIGHTNING / BLACKOUT
+  // =============================================
 
   stopNightSky();
 
@@ -932,7 +900,7 @@ function updateShow() {
 
 
   /*
-  Detect automatic loop.
+  Detect automatic video loop.
   */
 
   if (
